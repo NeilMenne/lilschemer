@@ -2,4 +2,4 @@
 ;
 ; Add more test classes here, if desired
 ;
-(load "test/part1.scm")
+(load "test/lilschemer.scm")

@@ -1,4 +1,4 @@
-(load "src/part1.scm")
+(load "src/lilschemer.scm")
 (in-test-group
   Chapter1
   (define-test (lists-are-not-atoms)
