@@ -23,6 +23,13 @@
      ((eq? (car l) x) (cdr l))
      (else (cons (car l) (rember x (cdr l)))))))
 
+(define rember2
+  (lambda (x l)
+    (cond
+     ((null? l) (quote ()))
+     ((equal? x (car l)) (cdr l))
+     (else (cons (car l) (rember2 x (cdr l)))))))
+
 (define multirember
   (lambda (x l)
     (cond
@@ -180,3 +187,78 @@
 (define is-one?
   (lambda (x)
     (= x 1)))
+
+(define rember*
+  (lambda (x l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l)) (cond
+                       ((equiv-atoms x (car l)) (rember* x (cdr l)))
+                       (else (cons (car l) (rember* x (cdr l))))))
+     (else (cons (rember* x (car l)) (rember* x (cdr l)))))))
+
+(define insertRight*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l)) (cond
+                       ((equiv-atoms old (car l)) (cons old (cons new (insertRight* new old (cdr l)))))
+                       (else (cons (car l) (insertRight* new old (cdr l))))))
+     (else (cons (insertRight* new old (car l)) (insertRight* new old (cdr l)))))))
+
+(define insertLeft*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l)) (cond
+                       ((equiv-atoms old (car l)) (cons new (cons old (insertLeft* new old (cdr l)))))
+                       (else (cons (car l) (insertLeft* new old (cdr l))))))
+     (else (cons (insertLeft* new old (car l)) (insertLeft* new old (cdr l)))))))
+
+(define subst*
+  (lambda (new old l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l)) (cond
+                       ((equiv-atoms old (car l)) (cons new (subst* new old (cdr l))))
+                       (else (cons (car l) (subst* new old (cdr l))))))
+     (else (cons (subst* new old (car l)) (subst* new old (cdr l)))))))
+
+(define occurs*
+  (lambda (x l)
+    (cond
+     ((null? l) 0)
+     ((atom? (car l)) (cond
+                       ((equiv-atoms x (car l)) (+ 1 (occurs* x (cdr l))))
+                       (else (+ 0 (occurs* x (cdr l))))))
+     (else (+ (occurs* x (car l)) (occurs* x (cdr l)))))))
+
+(define member*
+  (lambda (x l)
+    (cond
+     ((null? l) #f)
+     ((atom? (car l)) (or (equiv-atoms x (car l)) (member* x (cdr l))))
+     (else (or (member* x (car l)) (member* x (cdr l)))))))
+
+(define leftmost
+  (lambda (l)
+    (cond
+     ((null? l) (quote ()))
+     ((atom? (car l)) (car l))
+     (else (leftmost (car l))))))
+
+(define eqlist
+  (lambda (l1 l2)
+    (cond
+     ((and (null? l1) (null? l2)) #t)
+     ((or (null? l1) (null? l2)) #f)
+     ((and (atom? (car l1)) (atom? (car l2))) (and (equiv-atoms (car l1) (car l2)) (eqlist (cdr l1) (cdr l2))))
+     ((or (atom? (car l1)) (atom? (car l2))) #f)
+     (else (and (eqlist (car l1) (car l2)) (eqlist (cdr l1) (cdr l2)))))))
+     
+(define equal?
+  (lambda (x y)
+    (cond
+     ((and (atom? x) (atom? y)) (equiv-atoms x y)) 
+      ((or (atom? x) (atom? y)) #f)
+      (else (eqlist x y)))))
