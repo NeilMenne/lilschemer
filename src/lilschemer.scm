@@ -100,3 +100,83 @@
       (cond
        ((or (eq? (car l) old1) (eq? (car l) old2)) (cons new (cdr l)))
        (else (cons (car l) (subst2 new old1 old2 (cdr l)))))))))
+
+(define add1
+  (lambda (x)
+    (+ x 1)))
+
+(define sub1
+  (lambda (x)
+    (- x 1)))
+
+(define addtup
+  (lambda (l)
+    (cond
+     ((null? l) 0)
+     (else (+ (car l) (addtup (cdr l)))))))
+
+(define tup+
+  (lambda (l1 l2)
+    (cond
+     ((null? l1) l2)
+     ((null? l2) l1)
+     (else (cons (+ (car l1) (car l2)) (tup+ (cdr l1) (cdr l2)))))))
+
+(define length
+  (lambda (l)
+    (cond
+     ((null? l) 0)
+     (else (+ 1 (length (cdr l)))))))
+
+(define pick
+  (lambda (n l)
+    (cond
+     ((= 0 (- n 1)) (car l))
+     (else (pick (- n 1) (cdr l))))))
+
+(define rempick
+  (lambda (n l)
+    (cond
+     ((= 0 (- n 1)) (cdr l))
+     (else (cons (car l) (rempick (- n 1) (cdr l)))))))
+
+(define rempick2
+  (lambda (n l)
+    (cond
+     ((is-one? n) (cdr l))
+     (else (cons (car l) (rempick2 (- n 1) (cdr l)))))))
+
+(define no-nums
+  (lambda (l)
+    (cond
+     ((null? l) (quote ()))
+     (else (cond
+            ((number? (car l)) (no-nums (cdr l)))
+            (else (cons (car l) (no-nums (cdr l)))))))))
+
+(define all-nums
+  (lambda (l)
+    (cond
+     ((null? l) (quote ()))
+     (else (cond
+            ((number? (car l)) (cons (car l) (all-nums (cdr l))))
+            (else (all-nums (cdr l))))))))
+
+(define equiv-atoms
+  (lambda (a1 a2)
+    (cond
+     ((and (number? a1) (number? a2)) (= a1 a2))
+     ((or (number? a1) (number? a2) #f))
+     (else (eq? a1 a2)))))
+
+(define occurs
+  (lambda (x l)
+    (cond
+     ((null? l) 0)
+     (else (cond
+            ((equiv-atoms x (car l)) (+ 1 (occurs x (cdr l))))
+            (else (occurs x (cdr l))))))))
+
+(define is-one?
+  (lambda (x)
+    (= x 1)))
