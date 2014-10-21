@@ -283,4 +283,10 @@
     (assert-equals 9 (value-4 '(+ (* 4 2) 1)) "recurses properly")
     (assert-equals 8 (value-4 '(raise 2 3)) "prefix notation does its thing")
   )
+  (define-each-test
+    (assert-true (sero? '()) "sero? works as expected")
+    (assert-equals '(()) (paren-add1 '()) "add1 works for this method")
+    (assert-equals '(() ()) (paren-add1 '(())) "try add1 for non-zero")
+    (assert-equals '(()) (paren-sub1 '(() ())) "sub1 works")
+  )
 )

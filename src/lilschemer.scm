@@ -359,3 +359,12 @@
      ((eq? (operator x) (quote raise))
       (raise (value-4 (first x))
              (value-4 (second x))))))
+
+(define (sero? x)
+  (null? x))
+
+(define (paren-add1 x)
+  (cons (quote ()) x))
+
+(define (paren-sub1 x)
+  (cdr x))
