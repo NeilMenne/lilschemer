@@ -1,6 +1,6 @@
 (define atom?
   (lambda (x)
-    (not (or (pair? x) 
+    (not (or (pair? x)
              (null? x)))))
 
 (define lat?
@@ -62,7 +62,7 @@
       (cond
        ((eq? (car l) old) (cons old (cons new (multiInsertRight new old (cdr l)))))
        (else (cons (car l) (multiInsertRight new old (cdr l)))))))))
-            
+
 (define insertLeft
   (lambda (new old l)
     (cond
@@ -258,6 +258,104 @@
 (define equal?
   (lambda (x y)
     (cond
-     ((and (atom? x) (atom? y)) (equiv-atoms x y)) 
+     ((and (atom? x) (atom? y)) (equiv-atoms x y))
       ((or (atom? x) (atom? y)) #f)
       (else (eqlist x y)))))
+
+(define numbered?
+  (lambda (x)
+    (cond
+     ((atom? x) (number? x))
+     (else (and (numbered? (car x))
+                (numbered? (car (cdr (cdr x)))))))))
+
+; For simplicity, we'll only consider raising a number by a number >= 0
+; For raising a number to a power < 0, treat as raising to 0th power
+(define raise
+  (lambda (x y)
+    (cond
+     ((or (= y 0)
+          (< y 0))
+      1)
+     ((= y 1) x)
+     (else (* x (raise x (- y 1)))))))
+
+(define valid-operator?
+  (lambda (op)
+    (or (eq? (quote +) op)
+        (eq? (quote *) op)
+        (eq? (quote -) op)
+        (eq? (quote raise) op))))
+
+(define operator
+  (lambda (x)
+    (car (cdr x))))
+
+; This also only works for superior lisps (like Racket)
+; This allows us to evaluate arithmetic expressions that look like '(1 + 4)
+; This doesn't allow us to deal with actual lisp prefix notation style expressions like (+ 1 4)
+(define value
+  (lambda (x)
+    (cond
+     ((atom? x) x)
+     ((valid-operator? (operator x))
+      ((eval (operator x))
+       (value (car x))
+       (value (car (cdr (cdr x))))))
+     (else 0))))
+
+(define operator-2
+  (lambda (x)
+    (car x)))
+
+(define first-sub-expr
+  (lambda (x)
+    (car (cdr x))))
+
+(define second-sub-expr
+  (lambda (x)
+    (car (cdr (cdr x)))))
+
+; This version evalues standard prefix notation things like (+ 1 4)
+(define value-2
+  (lambda (x)
+    (cond
+     ((atom? x) x)
+     ((valid-operator? (operator-2 x))
+      ((eval (operator-2 x))
+       (value-2 (first-sub-expr x))
+       (value-2 (second-sub-expr x)))))))
+
+; Works for MIT scheme (not as 'cool')
+(define (value-3 x)
+  (define (first x) (car x))
+  (define (second x) (car (cdr (cdr x))))
+  (define (operator x) (car (cdr x)))
+  (cond
+      ((atom? x) x)
+      ((eq? (operator x) (quote +))
+       (+ (value-3 (first x))
+          (value-3 (second x))))
+      ((eq? (operator x) (quote *))
+       (* (value-3 (first x))
+          (value-3 (second x))))
+      ((eq? (operator x) (quote raise))
+       (raise (value-3 (first x))
+              (value-3 (second x))))))
+
+; Prefix notation version that works for MIT scheme
+(define (value-4 x)
+  (define (first x) (car (cdr x)))
+  (define (second x) (car (cdr (cdr x))))
+  (define (operator x) (car x))
+  (cond
+     ((atom? x) x)
+     ((eq? (operator x) (quote +))
+      (+ (value-4 (first x))
+         (value-4 (second x))))
+     ((eq? (operator x) (quote *))
+      (* (value-4 (first x))
+         (value-4 (second x))))
+     ((eq? (operator x) (quote raise))
+      (raise (value-4 (first x))
+             (value-4 (second x))))))

@@ -266,3 +266,21 @@
     (assert-equal (list 1 2 5) (rember2 (list 3 4) x) "remove the s-expression not just the atom")
   )
 )
+
+(in-test-group
+  Chapter6:Shadows
+  (define-test (numbered?-works)
+    (assert-true (numbered? 2) "numbers are numbers")
+    (assert-true (numbered? '(1 + 3)) "arithmetic expressions are cool too")
+  )
+  (define-test (value-3-works)
+    (assert-equals 9 (value-3 '(8 + 1)) "add")
+    (assert-equals 10 (value-3 '(5 * 2)) "multiply")
+    (assert-equals 8 (value-3 '(2 raise 3)) "raise")
+  )
+  (define-test (value-4-works)
+    (assert-equals 8 (value-4 '(* 4 2)) "multiply prefix style")
+    (assert-equals 9 (value-4 '(+ (* 4 2) 1)) "recurses properly")
+    (assert-equals 8 (value-4 '(raise 2 3)) "prefix notation does its thing")
+  )
+)
