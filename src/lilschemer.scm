@@ -390,3 +390,31 @@
      ((and (member? (car x) y)
            (subset? (cdr x) y)))
      (else #f))))
+
+(define eqset?
+  (lambda (x y)
+    (and (subset? x y)
+         (subset? y x))))
+
+(define intersect?
+  (lambda (x y)
+    (cond
+     ((null? x) #f)
+     (else
+      (or (member? (car x) y)
+          (intersect? (cdr x) y))))))
+
+(define intersect
+  (lambda (x y)
+    (cond
+     ((null? x) ())
+     ((member? (car x) y) (cons (car x) (intersect (cdr x) y)))
+     (else (intersect (cdr x) y)))))
+
+(define union
+  (lambda (x y)
+    (cond
+     ((null? x) y)
+     ((member? (car x) y) (union (cdr x) y))
+     (else
+      (cons (car x) (union (cdr x) y))))))
