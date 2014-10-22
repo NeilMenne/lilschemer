@@ -368,3 +368,25 @@
 
 (define (paren-sub1 x)
   (cdr x))
+
+(define set?
+  (lambda (x)
+    (cond
+     ((null? x) #t)
+     ((member? (car x) (cdr x)) #f)
+     (else
+      (set? (cdr x))))))
+
+(define makeset
+  (lambda (x)
+    (cond
+     ((null? x) ())
+     (else (cons (car x) (makeset (multirember (car x) (cdr x))))))))
+
+(define subset?
+  (lambda (x y)
+    (cond
+     ((null? x) #t)
+     ((and (member? (car x) y)
+           (subset? (cdr x) y)))
+     (else #f))))

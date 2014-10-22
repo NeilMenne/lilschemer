@@ -290,3 +290,25 @@
     (assert-equals '(()) (paren-sub1 '(() ())) "sub1 works")
   )
 )
+
+(in-test-group
+ Chapter7:FriendsAndRelations
+ (define-each-test
+   ; set? tests
+   (assert-true (set? '(a b c)) "No repeating members")
+   (assert-false (set? '(a b c a)) "Has repeating members")
+   (assert-true (set? '()) "No members is okay too")
+   (assert-true (set? '(1 2 3)) "Works for numbers")
+   (assert-false (set? '(1 2 3 1)) "False when duplicate numbers exist")
+ )
+ (define-test (makeset-works)
+   (define l '(a b c d a b c e))
+   (define out-l '(a b c d e))
+   (assert-equal out-l (makeset l) "makes a unique set as expected")
+ )
+ (define-test (subset?-works)
+   (assert-true (subset? '(a) '(a b c)) "subset works")
+   (assert-true (subset? '() '(a b c)) "null is always a subset")
+   (assert-false (subset? '(d) '(a b c)) "false when it should be false")
+ )
+)
