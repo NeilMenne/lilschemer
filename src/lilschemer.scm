@@ -418,3 +418,69 @@
      ((member? (car x) y) (union (cdr x) y))
      (else
       (cons (car x) (union (cdr x) y))))))
+
+(define a-pair?
+  (lambda (x)
+    (cond
+     ((or (null? x) ;if it's zero items
+          (atom? x) ;if it's only one item
+          (null? (cdr x)) ;if it's a list of only one item
+          (not (null? (cdr (cdr x))))) #f)
+     (else #t))))
+
+(define first
+  (lambda (x)
+    (car x)))
+
+(define second
+  (lambda (x)
+    (car (cdr x))))
+
+(define third
+  (lambda (x)
+    (car (cdr (cdr x)))))
+
+(define build
+  (lambda (s1 s2)
+    (cons s1 (cons s2 (quote ())))))
+
+(define fun?
+  (lambda (rel)
+    (set? (firsts rel))))
+
+(define revrel
+  (lambda (rel)
+    (cond
+     ((null? rel) (quote ()))
+     (else
+      (cons (build
+             (second (car rel))
+             (first (car rel)))
+            (revrel (cdr rel)))))))
+
+(define revpair
+  (lambda (pair)
+    (build (second pair) (first pair))))
+
+; use revrel
+(define revrel2
+  (lambda (rel)
+    (cond
+     ((null? rel) (quote ()))
+     (else
+      (cons (revpair (car rel))
+            (revrel2 (cdr rel)))))))
+
+(define seconds
+  (lambda (rel)
+    (cond
+     ((null? rel) (quote ()))
+     (else (cons (second (car rel)) (seconds (cdr rel)))))))
+
+(define fullfun?
+  (lambda (rel)
+    (set? (seconds rel))))
+
+(define one-to-one?
+  (lambda (rel)
+    (fun? (revrel rel))))
