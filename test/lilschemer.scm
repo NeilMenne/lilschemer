@@ -1,3 +1,4 @@
+(load "lib/test-manager/load.scm")
 (load "src/lilschemer.scm")
 (in-test-group
   Chapter1
@@ -393,5 +394,28 @@
    (assert-equal '((2 8) 10 (() 6) 2) (evens-only* '((9 1 2 8) 3 10 ((9 9) 7 6) 2)) "evens only recursive")
    (assert-equal 38 (evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (x y z) z)) "give me the sum of the odds")
    (assert-equal (* 2 8 10 6 2) (evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) (lambda (x y z) y)) "give me the product of the evens")
+ )
+)
+(in-test-group
+ Chapter9:Again_Again_and_Again
+ (define-each-test
+   (assert-equal 3 (pick 2 (list 1 3 2)) "pick the second item")
+   (assert-equal 4 (pick 1 (list 4 3 2)) "pick first item")
+   (assert-equal 3 (pick 4 (list 4 5 2 3 1)) "pick the third item")
+ )
+ (define-each-test
+   (assert-true (looking 'answer '(6 2 4 answer 5 7 3)) "finds the answer")
+   (assert-false (looking 'answer '(6 2 other answer 5 7 3)) "can't find the answer")
+ )
+ (define-each-test
+   (assert-equal '(a (b c)) (shift '((a b) c)) "shift")
+   (assert-equal '(a (b (c d))) (shift '((a b) (c d))) "shift part 2")
+ )
+ (define-each-test
+   (assert-equal 5 (length* '((1 2) (3 (4 5)))) "length* can count pairs")
+   (assert-equal 1 (length* 'atom) "atoms count as 1")
+ )
+ (define-each-test
+   (assert-equal 120 (factorial 5) "Verify that the Y-combinator gives us the proper recursion")
  )
 )

@@ -135,12 +135,6 @@
      ((null? l) 0)
      (else (+ 1 (length (cdr l)))))))
 
-(define pick
-  (lambda (n l)
-    (cond
-     ((= 0 (- n 1)) (car l))
-     (else (pick (- n 1) (cdr l))))))
-
 (define rempick
   (lambda (n l)
     (cond
@@ -634,3 +628,60 @@
        (else (evens-only*&co (cdr l) (lambda (newl p s) (col newl p (+ (car l) s)))))))
      (else
       (evens-only*&co (car l) (lambda (newl p s) (evens-only*&co (cdr l) (lambda (newl2 p2 s2) (col (cons newl newl2) (* p p2) (+ s s2))))))))))
+
+(define looking
+  (lambda (a lat)
+    (keep-looking a (pick 1 lat) lat)))
+
+(define keep-looking
+  (lambda (a sorn lat)
+    (cond
+     ((number? sorn) (keep-looking a (pick sorn lat) lat))
+     (else (eq? sorn a)))))
+
+(define pick
+  (lambda (num lat)
+    (cond
+     ((= num 1) (car lat))
+     (else (pick (- num 1) (cdr lat))))))
+
+(define shift
+  (lambda (p)
+    (define (first x) (car x))
+    (define (second x) (cadr x))
+    (build (first (first p))
+          (build (second (first p))
+                (second p)))))
+
+(define align
+  (lambda (pora)
+    (cond
+     ((atom? pora) pora)
+     ((a-pair? (first pora))
+      (align (shift pora)))
+     (else (build (first pora)
+                  (align (second pora)))))))
+
+(define length*
+  (lambda (pora)
+    (cond
+     ((atom? pora) 1)
+     (else
+      (+ (length* (first pora))
+         (length* (second pora)))))))
+
+(define Y
+  (lambda (le)
+    ((lambda (f) (f f))
+     (lambda (f)
+       (le (lambda (x) ((f f) x)))))))
+
+(define almost-factorial
+  (lambda (f)
+    (lambda (n)
+      (if (= n 0)
+          1
+          (* n (f (- n 1)))))))
+
+; Y combinator allows to have recursion without having a function look like it's calling itself
+(define factorial (Y almost-factorial))
