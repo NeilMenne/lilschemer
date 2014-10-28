@@ -417,6 +417,7 @@
  )
  (define-each-test
    (assert-equal 120 (factorial 5) "Verify that the Y-combinator gives us the proper recursion")
+   (assert-equal 144 (fibonacci 11) "Y combinator to implement the fibonacci sequence")
  )
 )
 (in-test-group

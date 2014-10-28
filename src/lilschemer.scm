@@ -676,6 +676,17 @@
      (lambda (f)
        (le (lambda (x) ((f f) x)))))))
 
+(define almost-fibonacci
+  (lambda (f)
+    (lambda (n)
+      (cond
+       ((= n 0) 1)
+       ((= n 1) 1)
+       (else (+ (f (- n 1))
+                (f (- n 2))))))))
+
+(define fibonacci (Y almost-fibonacci))
+
 (define almost-factorial
   (lambda (f)
     (lambda (n)
