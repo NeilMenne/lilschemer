@@ -419,3 +419,21 @@
    (assert-equal 120 (factorial 5) "Verify that the Y-combinator gives us the proper recursion")
  )
 )
+(in-test-group
+ Chapter10:WhatIsTheValueOfAllThis?
+ (define-test (lookup-tests)
+   ; return false when name isn't found
+   (define entry-function (lambda (name) #f))
+   (define entries '((notme findme meeither) (whocares answer doesntmatter)))
+   (assert-equal 'answer (lookup-in-entry 'findme entries entry-function) "finds the answer")
+   (assert-false (lookup-in-entry 'unfindable entries entry-function) "no can find")
+ )
+ (define-test (lookup-in-table-tests)
+   (define table-function (lambda (name) #f))
+   (define table '(((entree dessert) (spaghetti spumoni))
+                   ((appetizer entree beverage) (food tastes good))))
+   (assert-equal 'spaghetti (lookup-in-table 'entree table table-function) "first things first")
+   (assert-equal 'good (lookup-in-table 'beverage table table-function) "will look in second if necessary")
+   (assert-false (lookup-in-table 'dne table table-function) "falls back on the provided function")
+ )
+)
